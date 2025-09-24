@@ -78,7 +78,7 @@ min(grants$total_amount)
 - Which organization received the largest grant?
 
 ```{r}
-grants
+grants$organization[grants$total_amount == max(grants$total_amount)]
 
 ```
 
@@ -86,18 +86,20 @@ grants
 - Which organization received the smallest grant?
 
 ```{r}
-
+grants$organization[grants$total_amount == min(grants$total_amount)]
 ```
 
 - How many grants were awarded in 2010?
 
 ```{r}
+length(grants$start_year[grants$start_year == 2010])
 
 ```
 
 - How much was awarded in 2010? 
 
 ```{r}
+sum(grants$total_amount[grants$start_year == 2010])
 
 ```
 
@@ -109,6 +111,7 @@ Load R's "USPersonalExpenditure" dataset using the `data()` function
 This will produce a data frame called `USPersonalExpenditure`
 ```{r}
 data("USPersonalExpenditure")
+USPersonalExpenditure
 ```
 
 The variable `USPersonalExpenditure` is now accessible to you. Unfortunately, it's not a data frame (it's actually a matrix, you can find that out using) 
@@ -124,13 +127,15 @@ Luckily, you can pass the USPersonalExpenditure variable as an argument to the `
 Do this, storing the result in a new variable
 
 ```{r}
+USPE <- data.frame(USPersonalExpenditure)
+USPE
 
 ```
 
 
 What are the current column names of your dataframe?
 ```{r}
-
+colnames(USPE)
 ```
 
 
@@ -138,6 +143,7 @@ Consider: why are they so strange? (Think about whether you could use a number l
 
 What are the current row names of your dataframe?
 ```{r}
+rownames(USPE)
 
 ```
 
@@ -145,13 +151,33 @@ What are the current row names of your dataframe?
 Add a column "Category" to your data frame that contains the rownames
 
 ```{r}
+USPE <- rownames_to_column(USPE, var='Category')
+USPE
 
 ```
 
 Consider how this data isn't tidy. Use the `pivot_longer()` function from last class to make the data tidy. 
 
 ```{r}
+colnames(USPE)
+# error caused by taking Category as a column 
 
+# original pivot 
+# pivot_longer(
+#   data = USPE,
+#   cols = colnames(USPE),    <- this caused my error 
+#   names_to = "Year",
+#   values_to = "Val"
+# )
+
+USPE2 = pivot_longer(
+  data = USPE,
+  cols = colnames(USPE)[2:length(cols)],
+  names_to = "Year",
+  values_to = "Spending"
+)
+
+USPE2
 ```
 
 
